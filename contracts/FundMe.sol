@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
-
+// 这只是一个库函数，不需要部署到链上
 import "./PriceConverter.sol";
 
 error NotOwner();
