@@ -5,55 +5,63 @@ import "./PriceConverter.sol";
 
 error NotOwner();
 
-contract FundMe{
+contract FundMe {
     using PriceConverter for uint256;
     // 首先定义好合约想要实现的功能函数
 
     // constant immutable 都可以节省gas
 
     // 最少发送 50 USD
-    uint256 public constant MINIMUM_USD=50*1e18;// constant 关键字是在编译时确定了变量的值
+    uint256 public constant MINIMUM_USD = 50 * 1e18; // constant 关键字是在编译时确定了变量的值
     address[] public funders;
-    mapping (address=>uint256) public addressToAmountFunded; 
+    mapping(address => uint256) public addressToAmountFunded;
 
-    address public immutable i_owner;// immutable 是运行时被定义一次后就无法再更改
+    address public immutable i_owner; // immutable 是运行时被定义一次后就无法再更改
 
-    constructor(){
-        i_owner=msg.sender;
+    // 创建一个AggregatorV3Interface变量，外部可见，
+    AggregatorV3Interface public priceFeed;
+
+    // 在构造函数中传入赋值给priceFeed这个变量
+    constructor(AggregatorV3Interface priceFeedAddress) {
+        i_owner = msg.sender;
+        priceFeed = priceFeedAddress;
     }
 
-    receive() external payable { 
+    receive() external payable {
         fund();
     }
 
-    fallback() external payable { 
+    fallback() external payable {
         fund();
     }
 
-    modifier onlyOwner(){
+    modifier onlyOwner() {
         // 改进报错，节省gas可以用自定义error，两种都要会
         // require(msg.sender==i_owner,"not owner");
-        if(msg.sender!=i_owner)revert NotOwner();
+        if (msg.sender != i_owner) revert NotOwner();
         _;
     }
 
-    function fund()public  payable {
+    function fund() public payable {
         // 希望转账金额大于1ether，1e18=1*10^18=1000000000000000000wei
         // require(msg.value>=1e18,"didn't send enough");
 
-        require(msg.value.getConversionRate()>=MINIMUM_USD,"didn't send enough");
+        require(
+            msg.value.getConversionRate(priceFeed) >= MINIMUM_USD,
+            "didn't send enough"
+        );
         funders.push(msg.sender);
-        addressToAmountFunded[msg.sender]+=msg.value;
+        addressToAmountFunded[msg.sender] += msg.value;
     }
 
-    
-
-    function withdraw()public onlyOwner{
-        for(uint i=0;i<funders.length;i++){
-            addressToAmountFunded[funders[i]]=0;
+    function withdraw() public onlyOwner {
+        for (uint i = 0; i < funders.length; i++) {
+            addressToAmountFunded[funders[i]] = 0;
         }
         delete funders;
-        (bool success,)=payable (msg.sender).call{value:address(this).balance}("");
-        require(success,"withdraw failed");
+        (bool success, ) = payable(msg.sender).call{
+            value: address(this).balance
+        }("");
+        require(success, "withdraw failed");
     }
 }
