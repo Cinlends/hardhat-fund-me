@@ -3,6 +3,9 @@ pragma solidity ^0.8.7;
 // 这只是一个库函数，不需要部署到链上
 import "./PriceConverter.sol";
 
+/**
+ * @dev 抛出一个 `NotOwner` 错误。
+ */
 error NotOwner();
 
 contract FundMe {
@@ -21,16 +24,27 @@ contract FundMe {
     // 创建一个AggregatorV3Interface变量，外部可见，
     AggregatorV3Interface public priceFeed;
 
-    // 在构造函数中传入赋值给priceFeed这个变量
+    /**
+     * @dev 构造函数，用于初始化合约实例。
+     * @param priceFeedAddress 价格预言机合约地址,现在可以根据所处的网络来切换喂价合约地址了
+     */
     constructor(AggregatorV3Interface priceFeedAddress) {
         i_owner = msg.sender;
         priceFeed = priceFeedAddress;
     }
 
+    /**
+     * @dev 接收以太币的函数，用于接收合约的付款。
+     * 当合约接收到以太币时，会调用 `fund` 函数。
+     */
     receive() external payable {
         fund();
     }
 
+    /**
+     * @dev 回退函数，用于接收以太币的函数。
+     * 当合约接收到以太币时，会调用 `fund` 函数。
+     */
     fallback() external payable {
         fund();
     }
@@ -42,6 +56,11 @@ contract FundMe {
         _;
     }
 
+    /**
+     * @dev 接收以太币的函数，用于资助项目。
+     * @notice 转账金额必须大于等于最小金额。
+     * @notice 转账金额将被记录在资助者的地址和转账金额的映射中。
+     */
     function fund() public payable {
         // 希望转账金额大于1ether，1e18=1*10^18=1000000000000000000wei
         // require(msg.value>=1e18,"didn't send enough");
@@ -54,6 +73,13 @@ contract FundMe {
         addressToAmountFunded[msg.sender] += msg.value;
     }
 
+    /**
+     * @dev 允许合约的所有者从合约中提取所有资金。
+     * 它将每个资助者资助的金额设置为0，并删除资助者列表。
+     * 然后，将合约的余额转移到所有者。
+     * @notice 只有所有者可以调用此函数。
+     * @notice 如果转账失败，此函数将回滚。
+     */
     function withdraw() public onlyOwner {
         for (uint i = 0; i < funders.length; i++) {
             addressToAmountFunded[funders[i]] = 0;

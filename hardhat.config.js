@@ -1,15 +1,41 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
+require("dotenv").config();
 
-/**
- * Hardhat配置文件
- * @module hardhat.config
- */
-
-/** @type import('hardhat/config').HardhatUserConfig */
-// 为什么这里要使用module.exports
-// module.exports 是 Node.js 中的一个特殊对象，它可以被导入到其他文件中使用
+const SEPOLIA_RPC_URL =
+	process.env.SEPOLIA_RPC_URL ||
+	"https://eth-sepolia.g.alchemy.com/v2/YOUR-API-KEY";
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "private key";
 
 module.exports = {
-	solidity: "0.8.7",
+	solidity: {
+		compilers: [
+			{
+				version: "0.7.0",
+			},
+			{
+				version: "0.8.7",
+			},
+		],
+	},
+	defaultnetwork: "hardhat",
+	networks: {
+		localhost: {
+			url: "http://localhost:8545",
+			chainId: 31337,
+		},
+		sepolia: {
+			url: SEPOLIA_RPC_URL,
+			accounts: [PRIVATE_KEY],
+			chainId: 11155111,
+		},
+	},
+	namedAccounts: {
+		deployer: {
+			// 默认使用第一个账户
+			default: 0,
+			// 这个意味着chainId为4的网络上，deployer的地址是accounts[1]
+			// 4:1,
+		},
+	},
 };

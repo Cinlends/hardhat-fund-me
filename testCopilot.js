@@ -78,3 +78,15 @@ function addRainbow(color, number) {
 		number: number,
 	});
 }
+
+// 创建函数,传入一个整数与随机字符串进行拼接并返回
+
+/**
+ * 为给定的数字添加一个随机字符串。
+ * @param {number} num - 要添加随机字符串的数字。
+ * @returns {string} - 添加随机字符串后的结果。
+ */
+function addRandomString(num) {
+	let randomString = Math.random().toString(36).substring(2, 15);
+	return num + randomString;
+}

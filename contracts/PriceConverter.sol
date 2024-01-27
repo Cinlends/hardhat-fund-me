@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
-
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 // 库函数必须是internal的
@@ -18,13 +17,12 @@ library PriceConverter {
         return uint256(answer * 1e10);
     }
 
-    function getVersion() internal view returns (uint256) {
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(
-            0x694AA1769357215DE4FAC081bf1f309aDC325306
-        );
-        return priceFeed.version();
-    }
-
+    /**
+     * @dev 获取转换率
+     * @param ethAmount 以太币数量
+     * @param priceFeed 价格预言机接口
+     * @return 以太币对应的美元数量
+     */
     function getConversionRate(
         uint256 ethAmount,
         AggregatorV3Interface priceFeed
