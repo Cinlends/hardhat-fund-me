@@ -1,12 +1,17 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
 require("dotenv").config();
+//给验证合约设置代理
+const { setGlobalDispatcher, ProxyAgent } = require("undici");
+const proxyAgent = new ProxyAgent("http://127.0.0.1:10809");
+setGlobalDispatcher(proxyAgent);
 
 const SEPOLIA_RPC_URL =
 	process.env.SEPOLIA_RPC_URL ||
 	"https://eth-sepolia.g.alchemy.com/v2/YOUR-API-KEY";
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "private key";
-
+const ETHER_SCAN_API_KEY =
+	process.env.ETHER_SCAN_API_KEY || "ether scan api key";
 module.exports = {
 	solidity: {
 		compilers: [
@@ -28,7 +33,13 @@ module.exports = {
 			url: SEPOLIA_RPC_URL,
 			accounts: [PRIVATE_KEY],
 			chainId: 11155111,
+			blockConfirmation: 6, // 6个区块确认
 		},
+	},
+	etherscan: {
+		// Your API key for Etherscan
+		// Obtain one at https://etherscan.io/
+		apiKey: ETHER_SCAN_API_KEY,
 	},
 	namedAccounts: {
 		deployer: {
