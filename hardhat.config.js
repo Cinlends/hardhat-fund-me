@@ -2,8 +2,10 @@ require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-deploy");
 require("dotenv").config();
 //给验证合约设置代理
+const LOCAL_HTTP_PROXY =
+	process.env.LOCAL_HTTP_PROXY || "http://127.0.0.1:10809";
 const { setGlobalDispatcher, ProxyAgent } = require("undici");
-const proxyAgent = new ProxyAgent("http://127.0.0.1:10809");
+const proxyAgent = new ProxyAgent(LOCAL_HTTP_PROXY);
 setGlobalDispatcher(proxyAgent);
 
 const SEPOLIA_RPC_URL =
