@@ -25,4 +25,4 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
   console.log("Counter deployed to:", counter.address);
   console.log("-------------------------------------");
 };
-module.exports.tags = ["all", "counter"];
+module.exports.tags = ["counter"];
