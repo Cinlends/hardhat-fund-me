@@ -1,6 +1,7 @@
 node_modules
 .env
 deployments
+.yarnrc
 
 # Hardhat files
 /cache
