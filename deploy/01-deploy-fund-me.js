@@ -5,54 +5,54 @@ const { networkConfig } = require("../helper-hardhat-config");
 const { verify } = require("../utils/verify");
 
 module.exports = async function ({ getNamedAccounts, deployments }) {
-	// 当我们在本地或者hardhat网络上部署时,我们需要使用mock合约来模拟chainlink的AggregatorV3Interface.sol这个合约的功能
-	// 我们希望切换网络时可以自动把喂价合约的地址切换到对应的网络上
-	// 因此我们需要进行配置检测chainId同时读取喂价合约的地址
-	// 参考avve的helper-hardhat-config.js
+  // 当我们在本地或者hardhat网络上部署时,我们需要使用mock合约来模拟chainlink的AggregatorV3Interface.sol这个合约的功能
+  // 我们希望切换网络时可以自动把喂价合约的地址切换到对应的网络上
+  // 因此我们需要进行配置检测chainId同时读取喂价合约的地址
+  // 参考avve的helper-hardhat-config.js
 
-	// 从deployments中导入deploy和log方法
-	const { deploy, log } = deployments;
-	// 从getNamedAccounts中获取了deployer的地址,这个地址是在hardhat.config.js中配置的
-	const { deployer } = await getNamedAccounts();
-	// 从hardhat.config.js中获取了chainId
-	const { chainId } = network.config;
+  // 从deployments中导入deploy和log方法
+  const { deploy, log } = deployments;
+  // 从getNamedAccounts中获取了deployer的地址,这个地址是在hardhat.config.js中配置的
+  const { deployer } = await getNamedAccounts();
+  // 从hardhat.config.js中获取了chainId
+  const { chainId } = network.config;
 
-	// 在真实链上读取地址已经实现了,但是本地怎么办
-	//   const ethUsdPriceFeedAddress = networkConfig[chainId]["priceFeedAddress"];
-	// 对于没有喂价合约的网络(比如本地网络),我们使用mock合约来模拟
+  // 在真实链上读取地址已经实现了,但是本地怎么办
+  //   const ethUsdPriceFeedAddress = networkConfig[chainId]["priceFeedAddress"];
+  // 对于没有喂价合约的网络(比如本地网络),我们使用mock合约来模拟
 
-	let ethUsdPriceFeedAddress;
-	if (developmentChains.includes(network.name)) {
-		// 获取最近一次部署的mock合约的地址
-		const ethUsdAggregator = await deployments.get("MockV3Aggregator");
-		ethUsdPriceFeedAddress = ethUsdAggregator.address;
-	} else {
-		ethUsdPriceFeedAddress = networkConfig[chainId]["priceFeedAddress"];
-	}
+  let ethUsdPriceFeedAddress;
+  if (developmentChains.includes(network.name)) {
+    // 获取最近一次部署的mock合约的地址
+    const ethUsdAggregator = await deployments.get("MockV3Aggregator");
+    ethUsdPriceFeedAddress = ethUsdAggregator.address;
+  } else {
+    ethUsdPriceFeedAddress = networkConfig[chainId]["priceFeedAddress"];
+  }
 
-	// 之前我们是使用contractFactory来部署合约,现在我们直接使用deploy()方法来部署合约
-	const fundMe = await deploy("FundMe", {
-		// 这里是部署合约可选的参数
-		// 合约部署者
-		from: deployer,
-		// 合约构造函数需要传入的参数
-		args: [ethUsdPriceFeedAddress],
-		// gasLimit: 4000000,
-		// gasPrice: ethers.utils.parseUnits("30", "gwei"),
-		// nonce: 0,
-		// 开启日志
-		log: true,
-		waitConfirmations: network.config.blockconfirmations || 1,
-	});
-	// verify
-	if (
-		!developmentChains.includes(network.name) &&
-		process.env.ETHER_SCAN_API_KEY
-	) {
-		await verify(fundMe.address, []);
-	}
-	log("FundMe deployed to:", fundMe.address);
-	log("-------------------------------------");
+  // 之前我们是使用contractFactory来部署合约,现在我们直接使用deploy()方法来部署合约
+  const fundMe = await deploy("FundMe", {
+    // 这里是部署合约可选的参数
+    // 合约部署者
+    from: deployer,
+    // 合约构造函数需要传入的参数
+    args: [ethUsdPriceFeedAddress],
+    // gasLimit: 4000000,
+    // gasPrice: ethers.utils.parseUnits("30", "gwei"),
+    // nonce: 0,
+    // 开启日志
+    log: true,
+    waitConfirmations: network.config.blockconfirmations || 1,
+  });
+  // verify
+  if (
+    !developmentChains.includes(network.name) &&
+    process.env.ETHER_SCAN_API_KEY
+  ) {
+    await verify(fundMe.address, []);
+  }
+  log("FundMe deployed to:", fundMe.address);
+  log("-------------------------------------");
 };
 
 module.exports.tags = ["all", "fundme"];

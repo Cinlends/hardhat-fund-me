@@ -1,19 +1,38 @@
+// 代码风格 solidity
 // SPDX-License-Identifier: MIT
+
+// Pragma 编辑器版本声明
 pragma solidity ^0.8.7;
+
+// Import 导入
 // 这只是一个库函数，不需要部署到链上
 import "./PriceConverter.sol";
 
+// Error 自定义报错
 /**
  * @dev 抛出一个 `NotOwner` 错误。
  */
-error NotOwner();
+error FundMe__NotOwner();
+
+/**
+ * @title 整体说明
+ * @author 作者
+ * @notice 提示信息
+ * @dev 针对开发者的提示
+ */
+
+// Interface 接口
+// Libraries 库
+// Contract 合约
 
 contract FundMe {
+    // Type Declarations 类型声明，比如结构体什么的
+
     using PriceConverter for uint256;
     // 首先定义好合约想要实现的功能函数
 
     // constant immutable 都可以节省gas
-
+    // State Variables 状态变量，普通变量驼峰命名，常量全大写
     // 最少发送 50 USD
     uint256 public constant MINIMUM_USD = 50 * 1e18; // constant 关键字是在编译时确定了变量的值
     address[] public funders;
@@ -23,6 +42,27 @@ contract FundMe {
 
     // 创建一个AggregatorV3Interface变量，外部可见，
     AggregatorV3Interface public priceFeed;
+
+    // Events 事件
+
+    // Modifiers 修饰器
+    modifier onlyOwner() {
+        // 改进报错，节省gas可以用自定义error，两种都要会
+        // require(msg.sender==i_owner,"not owner");
+        if (msg.sender != i_owner) revert FundMe__NotOwner();
+        _;
+    }
+
+    // Functions
+    // 函数放置顺序
+    // constructor
+    // receive
+    // fallback
+    // external
+    // public
+    // interval
+    // private
+    // view / pure
 
     /**
      * @dev 构造函数，用于初始化合约实例。
@@ -47,13 +87,6 @@ contract FundMe {
      */
     fallback() external payable {
         fund();
-    }
-
-    modifier onlyOwner() {
-        // 改进报错，节省gas可以用自定义error，两种都要会
-        // require(msg.sender==i_owner,"not owner");
-        if (msg.sender != i_owner) revert NotOwner();
-        _;
     }
 
     /**
