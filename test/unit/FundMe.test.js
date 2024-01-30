@@ -76,9 +76,7 @@ describe("FundMe", async () => {
 		// 测试取钱-单个funder
 		it("Withdraw eth from a single funder", async () => {
 			// Arrange 准备
-			const startingDeployerBalance = await ethers.provider.getBalance(
-				deployer
-			);
+			const startingDeployerBalance = await ethers.provider.getBalance(deployer);
 			const startingFundMeBalance = await ethers.provider.getBalance(fundMe);
 			// Act 执行
 			const txResponse = await fundMe.withdraw();
@@ -94,7 +92,7 @@ describe("FundMe", async () => {
 			assert.equal(
 				(startingDeployerBalance + startingFundMeBalance).toString(),
 				(endingDeployerBalance + txCost).toString(),
-				"deployer balance is not correct"
+				"deployer balance is not correct",
 			);
 		});
 		// 测试取钱-多个funder
@@ -104,9 +102,7 @@ describe("FundMe", async () => {
 			for (let i = 1; i < 4; i++) {
 				await fundMe.connect(accounts[i]).fund({ value: sendValue });
 			}
-			const startingDeployerBalance = await ethers.provider.getBalance(
-				deployer
-			);
+			const startingDeployerBalance = await ethers.provider.getBalance(deployer);
 			const startingFundMeBalance = await ethers.provider.getBalance(fundMe);
 			// Act 执行
 			const txResponse = await fundMe.withdraw();
@@ -122,16 +118,12 @@ describe("FundMe", async () => {
 			assert.equal(
 				(startingDeployerBalance + startingFundMeBalance).toString(),
 				(endingDeployerBalance + txCost).toString(),
-				"deployer balance is not correct"
+				"deployer balance is not correct",
 			);
 
 			await expect(fundMe.funders(0)).to.be.revertedWith;
 			for (let i = 0; i < 4; i++) {
-				assert.equal(
-					await fundMe.addressToAmountFunded(accounts[i].address),
-					0,
-					"fundMe addressToAmountFunded is not correct"
-				);
+				assert.equal(await fundMe.addressToAmountFunded(accounts[i].address), 0, "fundMe addressToAmountFunded is not correct");
 			}
 		});
 		it("Only owner can withdraw", async () => {

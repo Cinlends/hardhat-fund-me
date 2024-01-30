@@ -45,10 +45,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 		waitConfirmations: network.config.blockconfirmations || 1,
 	});
 	// verify
-	if (
-		!developmentChains.includes(network.name) &&
-		process.env.ETHER_SCAN_API_KEY
-	) {
+	if (!developmentChains.includes(network.name) && process.env.ETHER_SCAN_API_KEY) {
 		await verify(fundMe.address, []);
 	}
 	log("FundMe deployed to:", fundMe.address);

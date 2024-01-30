@@ -1,10 +1,6 @@
 // 用来部署mock合约
 const { network } = require("hardhat");
-const {
-	developmentChains,
-	DECIMALS,
-	INITIAL_PRICE,
-} = require("../helper-hardhat-config");
+const { developmentChains, DECIMALS, INITIAL_PRICE } = require("../helper-hardhat-config");
 
 module.exports = async function ({ getNamedAccounts, deployments }) {
 	const { deploy, log } = deployments;

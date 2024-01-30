@@ -5,18 +5,14 @@ require("dotenv").config();
 require("hardhat-gas-reporter");
 require("solidity-coverage");
 //给验证合约设置代理
-const LOCAL_HTTP_PROXY =
-	process.env.LOCAL_HTTP_PROXY || "http://127.0.0.1:10809";
+const LOCAL_HTTP_PROXY = process.env.LOCAL_HTTP_PROXY || "http://127.0.0.1:10809";
 const { setGlobalDispatcher, ProxyAgent } = require("undici");
 const proxyAgent = new ProxyAgent(LOCAL_HTTP_PROXY);
 setGlobalDispatcher(proxyAgent);
 
-const SEPOLIA_RPC_URL =
-	process.env.SEPOLIA_RPC_URL ||
-	"https://eth-sepolia.g.alchemy.com/v2/YOUR-API-KEY";
+const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "https://eth-sepolia.g.alchemy.com/v2/YOUR-API-KEY";
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "private key";
-const ETHER_SCAN_API_KEY =
-	process.env.ETHER_SCAN_API_KEY || "ether scan api key";
+const ETHER_SCAN_API_KEY = process.env.ETHER_SCAN_API_KEY || "ether scan api key";
 module.exports = {
 	solidity: {
 		compilers: [
