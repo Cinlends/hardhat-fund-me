@@ -136,6 +136,7 @@ describe("FundMe", async () => {
 		});
 		it("Only owner can withdraw", async () => {
 			// Arrange 准备
+			console.log(`deployer: ${deployer}`);
 			const accounts = await ethers.getSigners();
 			const notOwner = accounts[1];
 			const attackContract = await fundMe.connect(notOwner);
