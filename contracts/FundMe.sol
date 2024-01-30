@@ -7,6 +7,7 @@ pragma solidity ^0.8.7;
 // Import 导入
 // 这只是一个库函数，不需要部署到链上
 import "./PriceConverter.sol";
+// import "hardhat/console.sol";
 
 // Error 自定义报错
 /**
@@ -71,6 +72,7 @@ contract FundMe {
     constructor(AggregatorV3Interface priceFeedAddress) {
         i_owner = msg.sender;
         priceFeed = priceFeedAddress;
+        // console.log("test log");
     }
 
     /**
