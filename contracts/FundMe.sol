@@ -140,7 +140,11 @@ contract FundMe {
 		return funders[index];
 	}
 
-	function getAddresstToAmountFunded(address addr) public view returns (uint256) {
+	function getAddressToAmountFunded(address addr) public view returns (uint256) {
 		return addressToAmountFunded[addr];
+	}
+
+	function getPriceFeed() public view returns (AggregatorV3Interface) {
+		return priceFeed;
 	}
 }

@@ -31,7 +31,7 @@ describe("FundMe", async () => {
 	// 按构造器功能分组的测试
 	describe("constructor", async () => {
 		it("Should set the arggregator address corrently", async () => {
-			const response = await fundMe.priceFeed();
+			const response = await fundMe.getPriceFeed();
 			const MAddress = await MockV3Aggregator.getAddress();
 			assert.equal(response, MAddress, "arggregator address is not correct");
 		});
@@ -53,7 +53,7 @@ describe("FundMe", async () => {
 			// console.log(`ethers version: ${ethers.version}`);
 			await fundMe.fund({ value: sendValue });
 			// const fundmeAddress = await fundMe.getAddress();
-			const response = await fundMe.addressToAmountFunded(deployer);
+			const response = await fundMe.getAddressToAmountFunded(deployer);
 			// const fundMeBalance = await ethers.provider.getBalance(fundmeAddress);
 			// assert.equal(fundMeBalance.toString(), sendValue, "fund failed");
 
@@ -62,7 +62,7 @@ describe("FundMe", async () => {
 		// 测试fund方法-添加funder到数组
 		it("Adds funder to array", async () => {
 			await fundMe.fund({ value: sendValue });
-			const response = await fundMe.funders(0);
+			const response = await fundMe.getFunders(0);
 			assert.equal(response, deployer, "funder was not added to array");
 		});
 	});
@@ -121,9 +121,9 @@ describe("FundMe", async () => {
 				"deployer balance is not correct",
 			);
 
-			await expect(fundMe.funders(0)).to.be.revertedWith;
+			await expect(fundMe.getFunders(0)).to.be.revertedWith;
 			for (let i = 0; i < 4; i++) {
-				assert.equal(await fundMe.addressToAmountFunded(accounts[i].address), 0, "fundMe addressToAmountFunded is not correct");
+				assert.equal(await fundMe.getAddressToAmountFunded(accounts[i].address), 0, "fundMe addressToAmountFunded is not correct");
 			}
 		});
 		it("Only owner can withdraw", async () => {
@@ -160,9 +160,9 @@ describe("FundMe", async () => {
 				"deployer balance is not correct",
 			);
 
-			await expect(fundMe.funders(0)).to.be.revertedWith;
+			await expect(fundMe.getFunders(0)).to.be.revertedWith;
 			for (let i = 0; i < 4; i++) {
-				assert.equal(await fundMe.addressToAmountFunded(accounts[i].address), 0, "fundMe addressToAmountFunded is not correct");
+				assert.equal(await fundMe.getAddressToAmountFunded(accounts[i].address), 0, "fundMe addressToAmountFunded is not correct");
 			}
 		});
 	});
