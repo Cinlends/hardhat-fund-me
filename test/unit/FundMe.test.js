@@ -128,12 +128,42 @@ describe("FundMe", async () => {
 		});
 		it("Only owner can withdraw", async () => {
 			// Arrange 准备
-			console.log(`deployer: ${deployer}`);
 			const accounts = await ethers.getSigners();
 			const notOwner = accounts[1];
 			const attackContract = await fundMe.connect(notOwner);
 			// Act 执行
-			await expect(attackContract.withdraw()).to.be.reverted;
+			await expect(attackContract.withdraw()).to.be.revertedWithCustomError(attackContract, "FundMe__NotOwner");
+		});
+		// 测试取钱-更便宜的取钱
+		it("Cheaper withdraw test...", async () => {
+			// Arrange 准备
+			const accounts = await ethers.getSigners();
+			for (let i = 1; i < 4; i++) {
+				await fundMe.connect(accounts[i]).fund({ value: sendValue });
+			}
+			const startingDeployerBalance = await ethers.provider.getBalance(deployer);
+			const startingFundMeBalance = await ethers.provider.getBalance(fundMe);
+			// Act 执行
+			const txResponse = await fundMe.cheaperWithdraw();
+			// 等待一个区块的确认,得到交易收据
+			const txReceipt = await txResponse.wait(1);
+			const { gasUsed, gasPrice } = txReceipt;
+			const txCost = gasUsed * gasPrice;
+
+			const endingDeployerBalance = await ethers.provider.getBalance(deployer);
+			const endingFundMeBalance = await ethers.provider.getBalance(fundMe);
+			// Assert 断言
+			assert.equal(endingFundMeBalance, 0, "fundMe balance is not correct");
+			assert.equal(
+				(startingDeployerBalance + startingFundMeBalance).toString(),
+				(endingDeployerBalance + txCost).toString(),
+				"deployer balance is not correct",
+			);
+
+			await expect(fundMe.funders(0)).to.be.revertedWith;
+			for (let i = 0; i < 4; i++) {
+				assert.equal(await fundMe.addressToAmountFunded(accounts[i].address), 0, "fundMe addressToAmountFunded is not correct");
+			}
 		});
 	});
 });

@@ -36,13 +36,13 @@ contract FundMe {
 	// State Variables 状态变量，普通变量驼峰命名，常量全大写
 	// 最少发送 50 USD
 	uint256 public constant MINIMUM_USD = 50 * 1e18; // constant 关键字是在编译时确定了变量的值
-	address[] public funders;
-	mapping(address => uint256) public addressToAmountFunded;
+	address[] private funders;
+	mapping(address => uint256) private addressToAmountFunded;
 
-	address public immutable i_owner; // immutable 是运行时被定义一次后就无法再更改
+	address private immutable i_owner; // immutable 是运行时被定义一次后就无法再更改
 
 	// 创建一个AggregatorV3Interface变量，外部可见，
-	AggregatorV3Interface public priceFeed;
+	AggregatorV3Interface private priceFeed;
 
 	// Events 事件
 
@@ -119,5 +119,28 @@ contract FundMe {
 		delete funders;
 		(bool success, ) = payable(msg.sender).call{value: address(this).balance}("");
 		require(success, "withdraw failed");
+	}
+
+	function cheaperWithdraw() public onlyOwner {
+		address[] memory m_funders = funders;
+		uint len = m_funders.length;
+		for (uint i = 0; i < len; i++) {
+			addressToAmountFunded[m_funders[i]] = 0;
+		}
+		funders = new address[](0);
+		(bool success, ) = payable(msg.sender).call{value: address(this).balance}("");
+		require(success, "withdraw failed");
+	}
+
+	function getOwner() public view returns (address) {
+		return i_owner;
+	}
+
+	function getFunders(uint index) public view returns (address) {
+		return funders[index];
+	}
+
+	function getAddresstToAmountFunded(address addr) public view returns (uint256) {
+		return addressToAmountFunded[addr];
 	}
 }
