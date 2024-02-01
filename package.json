@@ -1,4 +1,9 @@
 {
+	"name": "hardhat-fund-me",
+	"author": {
+		"name": "cinlends",
+		"email": "2488732383@qq.com"},
+	"version": "v1.0.0",
 	"devDependencies": {
 		"@chainlink/contracts": "^0.8.0",
 		"@nomicfoundation/hardhat-chai-matchers": "2.0.0",
@@ -21,6 +26,10 @@
 		"typechain": "8.3.0"
 	},
 	"scripts": {
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"lint": "prettier --check .",
+		"test": "hardhat test",
+		"test:coverage": "hardhat coverage",
+		"test:staging":"hardhat test --network sepolia"
 	}
 }

@@ -46,7 +46,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 	});
 	// verify
 	if (!developmentChains.includes(network.name) && process.env.ETHER_SCAN_API_KEY) {
-		await verify(fundMe.address, []);
+		await verify(fundMe.address, [ethUsdPriceFeedAddress]);
 	}
 	log("FundMe deployed to:", fundMe.address);
 	log("-------------------------------------");
