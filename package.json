@@ -30,6 +30,7 @@
 		"lint": "prettier --check .",
 		"test": "hardhat test",
 		"test:coverage": "hardhat coverage",
-		"test:staging":"hardhat test --network sepolia"
+		"test:staging":"hardhat test --network sepolia",
+		"compile": "hardhat compile"
 	}
 }

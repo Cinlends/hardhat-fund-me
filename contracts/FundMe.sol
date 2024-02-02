@@ -7,7 +7,7 @@ pragma solidity ^0.8.7;
 // Import 导入
 // 这只是一个库函数，不需要部署到链上
 import "./PriceConverter.sol";
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 // Error 自定义报错
 /**
@@ -75,21 +75,25 @@ contract FundMe {
 		// console.log("test log");
 	}
 
-	/**
-	 * @dev 接收以太币的函数，用于接收合约的付款。
-	 * 当合约接收到以太币时，会调用 `fund` 函数。
-	 */
-	receive() external payable {
-		fund();
-	}
+	receive() external payable {} // to support receiving ETH by default
 
-	/**
-	 * @dev 回退函数，用于接收以太币的函数。
-	 * 当合约接收到以太币时，会调用 `fund` 函数。
-	 */
-	fallback() external payable {
-		fund();
-	}
+	fallback() external payable {}
+
+	// /**
+	//  * @dev 接收以太币的函数，用于接收合约的付款。
+	//  * 当合约接收到以太币时，会调用 `fund` 函数。
+	//  */
+	// receive() external payable {
+	// 	fund();
+	// }
+
+	// /**
+	//  * @dev 回退函数，用于接收以太币的函数。
+	//  * 当合约接收到以太币时，会调用 `fund` 函数。
+	//  */
+	// fallback() external payable {
+	// 	fund();
+	// }
 
 	/**
 	 * @dev 接收以太币的函数，用于资助项目。
